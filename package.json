@@ -1,0 +1,29 @@
+{
+  "name": "backbone.storagesync",
+  "version": "1.0.0",
+  "description": "Backbone Sync to Web Storage.",
+  "main": "backbone.storagesync.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacobbuck/backbone.storagesync.git"
+  },
+  "keywords": [
+    "backbone",
+    "sync",
+    "storage",
+    "model"
+  ],
+  "author": "Jacob Buck <buck.jacob@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jacobbuck/backbone.storagesync/issues"
+  },
+  "homepage": "https://github.com/jacobbuck/backbone.storagesync",
+  "dependencies": {
+    "backbone": "^1.1.2",
+    "fake-storage": "^1.0.0"
+  }
+}
