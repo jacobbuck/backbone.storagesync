@@ -6,15 +6,19 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD
-		define(['backbone', 'fake-storage'], factory);
+		define(['backbone', 'underscore', 'fake-storage'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
-		exports.storagesync = factory();
+		exports.storagesync = factory(
+			require('backbone'), 
+			require('underscore'), 
+			require('fake-storage')
+		);
 	} else {
 		// Browser global
-		factory();
+		factory(root.Backbone, root.FakeStorage);
 	}
-}(this, function (Backbone, FakeStorage) {
+}(this, function (Backbone, _, FakeStorage) {
 	'use strict';
 
 	// Get Storage object
