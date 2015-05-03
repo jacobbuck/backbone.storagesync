@@ -8,12 +8,12 @@ Documentation
 
 Replace the sync method on your model:
 
-```
+```js
 var MyModel = Backbone.Model.extend({
 	sync: Backbone.storagesync
 	...
 });
-``
+```
 
 **Important:** Your model must have an id set.
 
