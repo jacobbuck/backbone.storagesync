@@ -71,8 +71,8 @@
 				case 'create':
 				case 'update':
 				case 'patch':
-					data = JSON.stringify(options.attrs || model.toJSON(options));
-					storage.setItem(id, data);
+					data = options.attrs || model.toJSON(options);
+					storage.setItem(id, JSON.stringify(data));
 					deferred.resolve(data);
 					break;
 
