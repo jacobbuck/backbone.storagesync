@@ -1,5 +1,5 @@
 /*!
- * Fake Storage - Copyright (c) 2015 Jacob Buck
+ * Backbone Storage Sync - Copyright (c) 2015 Jacob Buck
  * https://github.com/jacobbuck/fake-storage
  * Licensed under the terms of the MIT license.
  */
@@ -10,8 +10,8 @@
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		exports.storagesync = factory(
-			require('backbone'), 
-			require('underscore'), 
+			require('backbone'),
+			require('underscore'),
 			require('fake-storage')
 		);
 	} else {
@@ -21,8 +21,8 @@
 }(this, function (Backbone, _, FakeStorage) {
 	'use strict';
 
-	// Get Storage object
-	function getStorage () {
+	// Get a storage object
+	var storage = (function () {
 		var test = 'test';
 
 		// Try localStorage first
@@ -41,53 +41,70 @@
 
 		// Otherwise if no DOM storage is available, then use Fake Storage
 		return new FakeStorage();
-	}
+	})();
 
-	var storage = getStorage();
+	function storagesync (ns) {
+		ns = (ns || '');
 
-	function storagesync (method, model, options) {
-		var id = model.id;
+		return function (method, model, options) {
+			var id = ns + (model.id || '');
 
-		if (!id) {
-			throw new Error('An id property on ("' + model.cid + '") must be specified');
-		}
-
-		// Use Deferred as a fake jqXHR Object
-		var deferred = Backbone.$.Deferred();
-
-		// Read/write storage asynchronously, otherwise WebKit browsers will hang
-		_.defer(function () {
-			var data;
-			switch (method) {
-				case 'read':
-					data = storage.getItem(id);
-					if (_.isString(data)) {
-						deferred.resolve(JSON.parse(data));
-					} else {
-						deferred.reject();
-					}
-					break;
-
-				case 'create':
-				case 'update':
-				case 'patch':
-					data = options.attrs || model.toJSON(options);
-					storage.setItem(id, JSON.stringify(data));
-					deferred.resolve(data);
-					break;
-
-				case 'delete':
-					storage.removeItem(id);
-					deferred.resolve();
-					break;
+			if (!id) {
+				throw new Error('A namespace on storagesync or an id property on ("' + model.cid + '") must be specified');
 			}
-		});
 
-		// Bind callback options
-		deferred.then(options.success, options.error);
+			// Default options
+			_.defaults(options, {
+				async: true
+			});
 
-		model.trigger('request', model, deferred, options);
-		return deferred;
+			// Use Deferred as a fake jqXHR Object
+			var deferred = Backbone.$.Deferred();
+
+			function sync () {
+				var data; // Placeholder
+
+				switch (method) {
+					case 'read':
+						data = storage.getItem(id);
+						// Wrap in try/catch for JSON parsing issues
+						try {
+							data = JSON.parse(data);
+							deferred.resolve(data);
+						} catch (error) {
+							deferred.reject(error);
+						}
+						break;
+
+					case 'create':
+					case 'update':
+					case 'patch':
+						data = JSON.stringify(options.attrs || model.toJSON(options));
+						storage.setItem(id, data);
+						deferred.resolve();
+						break;
+
+					case 'delete':
+						storage.removeItem(id);
+						deferred.resolve();
+						break;
+				}
+			}
+
+			// Read/write storage asynchronously, otherwise some browsers may hang
+			if (options.async) {
+				_.defer(sync);
+			} else {
+				sync();
+			}
+
+			// Bind callback options
+			deferred.then(options.success, options.error);
+
+			model.trigger('request', model, deferred, options);
+
+			return deferred;
+		};
 	}
 
 	// Piggy-back onto Backbone object
