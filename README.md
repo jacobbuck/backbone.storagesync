@@ -38,7 +38,7 @@ Backbone.storagesync.storage = window.sessionStorage
 Or if you want a fallback for when Web Storage isn't avaiable:
 
 ```
-Backbone.storagesync.storage = require('fake-storage')
+Backbone.storagesync.storage = new FakeStorage()
 ```
 
 *Note: this example uses my [fake-storage](https://github.com/jacobbuck/fake-storage) library*
