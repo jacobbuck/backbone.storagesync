@@ -6,42 +6,18 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD
-		define(['backbone', 'underscore', 'fake-storage'], factory);
+		define(['backbone'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		exports.storagesync = factory(
-			require('backbone'),
-			require('underscore'),
-			require('fake-storage')
+			require('backbone')
 		);
 	} else {
 		// Browser global
-		factory(root.Backbone, root.FakeStorage);
+		factory(root.Backbone);
 	}
-}(this, function (Backbone, _, FakeStorage) {
+}(this, function (Backbone) {
 	'use strict';
-
-	// Get a storage object
-	var storage = (function () {
-		var test = 'test';
-
-		// Try localStorage first
-		try {
-			localStorage.setItem(test, test);
-			localStorage.removeItem(test);
-			return localStorage;
-		} catch(e) { }
-
-		// Sometimes sessionStorage is availible as a fallback
-		try {
-			sessionStorage.setItem(test, test);
-			sessionStorage.removeItem(test);
-			return sessionStorage;
-		} catch(e) { }
-
-		// Otherwise if no DOM storage is available, then use Fake Storage
-		return new FakeStorage();
-	})();
 
 	function storagesync (ns) {
 		ns = (ns || '');
@@ -54,9 +30,7 @@
 			}
 
 			// Default options
-			_.defaults(options, {
-				async: true
-			});
+			var async = options.async != void 0 ? options.async : true;
 
 			// Use Deferred as a fake jqXHR Object
 			var deferred = Backbone.$.Deferred();
@@ -92,8 +66,8 @@
 			}
 
 			// Read/write storage asynchronously, otherwise some browsers may hang
-			if (options.async) {
-				_.defer(sync);
+			if (async) {
+				setTimeout(sync, 1);
 			} else {
 				sync();
 			}
@@ -106,6 +80,9 @@
 			return deferred;
 		};
 	}
+
+	// Get a storage object
+	storagesync.storage = window.localStorage;
 
 	// Piggy-back onto Backbone object
 	Backbone.storagesync = storagesync;
