@@ -44,7 +44,7 @@ Backbone.storagesync.storage = require('[fake-storage](https://github.com/jacobb
 Dependancies
 ------------
 
-[Backbone](http://backbonejs.org) (obviously), [Underscore](http://underscorejs.org) (or [lodash](https://lodash.com)).
+[Backbone](http://backbonejs.org) (obviously). Also `Backbone.$.Deferred` must be present.
 
 License
 -------
