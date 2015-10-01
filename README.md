@@ -24,18 +24,30 @@ var AwesomeModel = Backbone.Model.extend({
 })
 ```
 
+Or with custom settings:
+
+```
+var AwesomeModel = Backbone.Model.extend({
+	sync: Backbone.storagesync({
+		namespace: 'awesome',
+		storage: window.sessionStorage
+	})
+	...
+})
+```
+
 And you're good to go!
 
 Alternative Storage
 -------------------
 
-By default storagesync will use `localStorage`, however you may change it like so:
+By default storagesync will use globally `localStorage`, however you may change it like so:
 
 ```
 Backbone.storagesync.storage = window.sessionStorage
 ```
 
-Or if you want a fallback for when Web Storage isn't avaiable:
+Or if you want a fallback for when Web Storage isn't available:
 
 ```
 Backbone.storagesync.storage = new FakeStorage()

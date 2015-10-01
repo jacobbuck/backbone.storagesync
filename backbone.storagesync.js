@@ -19,14 +19,22 @@
 }(this, function (Backbone) {
 	'use strict';
 
-	function storagesync (ns) {
-		ns = (ns || '');
+	function storagesync (settings) {
+		settings = (typeof settings === 'string') ? {namespace: settings} :
+			(settings || {});
 
 		return function (method, model, options) {
-			var id = ns + (model.id || '');
+			var key = (settings.namespace || '') + (model.id || '');
 
-			if (!id) {
-				throw new Error('A namespace on storagesync or an id property on ("' + model.cid + '") must be specified');
+			if (!key) {
+				throw new Error('A namespace on storagesync or an id property on ("' + model.cid + '") must be specified.');
+			}
+
+			// Get storage object
+			var storage = options.storage || settings.storage || storagesync.storage;
+
+			if (!storage) {
+				throw new Error('A storage object must be available to storagesync.');
 			}
 
 			// Default options
@@ -40,7 +48,7 @@
 
 				switch (method) {
 					case 'read':
-						data = storage.getItem(id);
+						data = storage.getItem(key);
 						// Wrap in try/catch for JSON parsing issues
 						try {
 							data = JSON.parse(data);
@@ -54,12 +62,12 @@
 					case 'update':
 					case 'patch':
 						data = JSON.stringify(options.attrs || model.toJSON(options));
-						storage.setItem(id, data);
+						storage.setItem(key, data);
 						deferred.resolve();
 						break;
 
 					case 'delete':
-						storage.removeItem(id);
+						storage.removeItem(key);
 						deferred.resolve();
 						break;
 				}
@@ -67,7 +75,7 @@
 
 			// Read/write storage asynchronously, otherwise some browsers may hang
 			if (async) {
-				setTimeout(sync, 1);
+				window.setTimeout(sync, 1);
 			} else {
 				sync();
 			}
