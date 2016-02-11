@@ -73,7 +73,7 @@
 				}
 			}
 
-			// Read/write storage asynchronously, otherwise some browsers may hang
+			// Read/write storage asynchronously, otherwise some browsers may block
 			if (async) {
 				window.setTimeout(sync, 1);
 			} else {
@@ -89,8 +89,11 @@
 		};
 	}
 
-	// Get a storage object
-	storagesync.storage = window.localStorage;
+	// Get the default storage object
+	// Wrap in try-catch to avoid a SecurityError when user has cookies disabled
+	try {
+		storagesync.storage = window.localStorage;
+	} catch (e) {}
 
 	// Piggy-back onto Backbone object
 	Backbone.storagesync = storagesync;
