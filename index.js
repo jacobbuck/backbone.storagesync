@@ -31,7 +31,7 @@ function storagesync(settings) {
 
       switch (method) {
         case 'read':
-          data =`` storage.getItem(key);
+          data = storage.getItem(key);
           // Wrap in try/catch for JSON parsing issues
           try {
             data = JSON.parse(data);
