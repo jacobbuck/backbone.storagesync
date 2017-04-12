@@ -1,6 +1,6 @@
 {
   "name": "backbone.storagesync",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "description": "Backbone Sync to Web Storage.",
   "main": "index.js",
   "scripts": {
