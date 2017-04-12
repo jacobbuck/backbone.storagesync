@@ -2,22 +2,22 @@
 
 var Backbone = require('backbone');
 
-function storagesync(settings) {
+function storageSync(settings) {
   settings = typeof settings === 'string' ? { namespace: settings } :
     (settings || {});
 
-  return function(method, model, options) {
+  return function sync(method, model, options) {
     var key = (settings.namespace || '') + (model.id || '');
 
     if (!key) {
-      throw new Error('A namespace on storagesync or an id property on ("' + model.cid + '") must be specified.');
+      throw new Error('A namespace on storageSync or an id property on ("' + model.cid + '") must be specified.');
     }
 
     // Get storage object
-    var storage = options.storage || settings.storage || storagesync.storage;
+    var storage = options.storage || settings.storage || storageSync.storage;
 
     if (!storage) {
-      throw new Error('A storage object must be available to storagesync.');
+      throw new Error('A storage object must be available to storageSync.');
     }
 
     // Default options
@@ -26,7 +26,7 @@ function storagesync(settings) {
     // Use Deferred as a fake jqXHR Object
     var deferred = Backbone.$.Deferred();
 
-    function sync() {
+    function internalSync() {
       var data; // Placeholder
 
       switch (method) {
@@ -58,9 +58,9 @@ function storagesync(settings) {
 
     // Read/write storage asynchronously, otherwise some browsers may block
     if (async) {
-      window.setTimeout(sync, 1);
+      window.setTimeout(internalSync, 1);
     } else {
-      sync();
+      internalSync();
     }
 
     // Bind callback options
@@ -75,10 +75,7 @@ function storagesync(settings) {
 // Get the default storage object
 // Wrap in try-catch to avoid a SecurityError when user has cookies disabled
 try {
-  storagesync.storage = window.localStorage;
+  storageSync.storage = window.localStorage;
 } catch (e) {}
 
-// Piggy-back onto Backbone object
-Backbone.storagesync = storagesync;
-
-module.exports = storagesync;
+module.exports = storageSync;

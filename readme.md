@@ -1,16 +1,16 @@
-Backbone Storage Sync
-=====================
+# Backbone Storage Sync
 
 Backbone Sync to Web Storage.
 
-Getting Started
----------------
+# Getting Started
 
 Replace the sync method on your model:
 
 ```js
-var AwesomeModel = Backbone.Model.extend({
-	sync: Backbone.storagesync()
+import storageSync from 'bacbone.storagesync';
+
+const AwesomeModel = Backbone.Model.extend({
+	sync: storageSync()
 	...
 })
 ```
@@ -18,8 +18,8 @@ var AwesomeModel = Backbone.Model.extend({
 Or with custom namespace:
 
 ```
-var AwesomeModel = Backbone.Model.extend({
-	sync: Backbone.storagesync('awesome')
+const AwesomeModel = Backbone.Model.extend({
+	sync: storageSync('awesome')
 	...
 })
 ```
@@ -27,8 +27,8 @@ var AwesomeModel = Backbone.Model.extend({
 Or with custom settings:
 
 ```
-var AwesomeModel = Backbone.Model.extend({
-	sync: Backbone.storagesync({
+const AwesomeModel = Backbone.Model.extend({
+	sync: storageSync({
 		namespace: 'awesome',
 		storage: window.sessionStorage
 	})
@@ -38,29 +38,26 @@ var AwesomeModel = Backbone.Model.extend({
 
 And you're good to go!
 
-Alternative Storage
--------------------
+# Alternative Storage
 
 By default storagesync will use globally `localStorage`, however you may change it like so:
 
 ```
-Backbone.storagesync.storage = window.sessionStorage
+storageSync.storage = window.sessionStorage
 ```
 
 Or if you want a fallback for when Web Storage isn't available:
 
 ```
-Backbone.storagesync.storage = new FakeStorage()
+storageSync.storage = new FakeStorage()
 ```
 
 *Note: this example uses my [fake-storage](https://github.com/jacobbuck/fake-storage) library*
 
-Dependancies
-------------
+# Dependancies
 
-[Backbone](http://backbonejs.org) (obviously). Also `Backbone.$.Deferred` must be present.
+[Backbone](http://backbonejs.org), and `Backbone.$.Deferred` must be present.
 
-License
--------
+# License
 
 MIT - see [LICENSE](LICENSE)
