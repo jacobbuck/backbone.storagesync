@@ -2,80 +2,80 @@
 
 var Backbone = require('backbone');
 
-function storagesync (settings) {
-	settings = (typeof settings === 'string') ? {namespace: settings} :
-		(settings || {});
+function storagesync(settings) {
+  settings = typeof settings === 'string' ? { namespace: settings } :
+    (settings || {});
 
-	return function (method, model, options) {
-		var key = (settings.namespace || '') + (model.id || '');
+  return function(method, model, options) {
+    var key = (settings.namespace || '') + (model.id || '');
 
-		if (!key) {
-			throw new Error('A namespace on storagesync or an id property on ("' + model.cid + '") must be specified.');
-		}
+    if (!key) {
+      throw new Error('A namespace on storagesync or an id property on ("' + model.cid + '") must be specified.');
+    }
 
-		// Get storage object
-		var storage = options.storage || settings.storage || storagesync.storage;
+    // Get storage object
+    var storage = options.storage || settings.storage || storagesync.storage;
 
-		if (!storage) {
-			throw new Error('A storage object must be available to storagesync.');
-		}
+    if (!storage) {
+      throw new Error('A storage object must be available to storagesync.');
+    }
 
-		// Default options
-		var async = options.async != void 0 ? options.async : true;
+    // Default options
+    var async = options.async != void 0 ? options.async : true;
 
-		// Use Deferred as a fake jqXHR Object
-		var deferred = Backbone.$.Deferred();
+    // Use Deferred as a fake jqXHR Object
+    var deferred = Backbone.$.Deferred();
 
-		function sync () {
-			var data; // Placeholder
+    function sync() {
+      var data; // Placeholder
 
-			switch (method) {
-				case 'read':
-					data = storage.getItem(key);
-					// Wrap in try/catch for JSON parsing issues
-					try {
-						data = JSON.parse(data);
-						deferred.resolve(data);
-					} catch (error) {
-						deferred.reject(error);
-					}
-					break;
+      switch (method) {
+        case 'read':
+          data =`` storage.getItem(key);
+          // Wrap in try/catch for JSON parsing issues
+          try {
+            data = JSON.parse(data);
+            deferred.resolve(data);
+          } catch (error) {
+            deferred.reject(error);
+          }
+          break;
 
-				case 'create':
-				case 'update':
-				case 'patch':
-					data = JSON.stringify(options.attrs || model.toJSON(options));
-					storage.setItem(key, data);
-					deferred.resolve();
-					break;
+        case 'create':
+        case 'update':
+        case 'patch':
+          data = JSON.stringify(options.attrs || model.toJSON(options));
+          storage.setItem(key, data);
+          deferred.resolve();
+          break;
 
-				case 'delete':
-					storage.removeItem(key);
-					deferred.resolve();
-					break;
-			}
-		}
+        case 'delete':
+          storage.removeItem(key);
+          deferred.resolve();
+          break;
+      }
+    }
 
-		// Read/write storage asynchronously, otherwise some browsers may block
-		if (async) {
-			window.setTimeout(sync, 1);
-		} else {
-			sync();
-		}
+    // Read/write storage asynchronously, otherwise some browsers may block
+    if (async) {
+      window.setTimeout(sync, 1);
+    } else {
+      sync();
+    }
 
-		// Bind callback options
-		deferred.then(options.success, options.error);
+    // Bind callback options
+    deferred.then(options.success, options.error);
 
-		model.trigger('request', model, deferred, options);
+    model.trigger('request', model, deferred, options);
 
-		return deferred;
-	};
+    return deferred;
+  };
 }
 
 // Get the default storage object
 // Wrap in try-catch to avoid a SecurityError when user has cookies disabled
 try {
-	storagesync.storage = window.localStorage;
+  storagesync.storage = window.localStorage;
 } catch (e) {}
 
 // Piggy-back onto Backbone object
