@@ -10,8 +10,8 @@ Replace the sync method on your model:
 import storageSync from 'bacbone.storagesync';
 
 const AwesomeModel = Backbone.Model.extend({
-	sync: storageSync()
-	...
+  sync: storageSync()
+  ...
 })
 ```
 
@@ -19,8 +19,8 @@ Or with custom namespace:
 
 ```
 const AwesomeModel = Backbone.Model.extend({
-	sync: storageSync('awesome')
-	...
+  sync: storageSync('awesome')
+  ...
 })
 ```
 
@@ -28,11 +28,11 @@ Or with custom settings:
 
 ```
 const AwesomeModel = Backbone.Model.extend({
-	sync: storageSync({
-		namespace: 'awesome',
-		storage: window.sessionStorage
-	})
-	...
+  sync: storageSync({
+    namespace: 'awesome',
+    storage: window.sessionStorage
+  })
+  ...
 })
 ```
 
